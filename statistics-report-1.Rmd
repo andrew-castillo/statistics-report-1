@@ -1,0 +1,133 @@
+---
+author: Andrew Castillo
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+`r format(Sys.time())`
+
+<font size="4">1.61a) </font> **Compute the mean for the data **
+
+Computing the mean of the given data set:
+```{r}
+table = read.table("ex01-62stout.txt", header = TRUE, sep = "\t", stringsAsFactors=FALSE)
+mean(table$RelativeTo1913)
+mean(table$RelativeToPast4)
+```
+As we can see, the mean of the data set relative to 1913 is `r mean(table$RelativeTo1913)` (a ratio of sales) and relative to the past 4 is `r mean(table$RelativeToPast4)` (a ratio of sales).
+
+<font size="4">1.61b) </font> **Compute the median for the data **
+
+Computing the median of the given data set:
+```{r}
+table = read.table("ex01-62stout.txt", header = TRUE, sep = "\t", stringsAsFactors=FALSE)
+median(table$RelativeTo1913)
+median(table$RelativeToPast4)
+```
+
+Therefore, the median relative to 1913 is `r median(table$RelativeTo1913)` and the median relative to the past 4 is `r median(table$RelativeToPast4)`
+
+<font size="4">1.61c) </font> **Explain if the mean or median are superior for analyzing the data**
+
+The mean is greater than the median, meaning the distribution is skewed to the right. So, the median would be the measure I would choose.
+
+<font size="4">1.68a) </font> **Graphically and numerically summarize the data, with reasons for choices **
+
+```{r make_scatter}
+beer = read.delim("ex01-68beer.txt", header = TRUE, stringsAsFactors = FALSE, quote = "", sep = "\t")
+plot(beer$PercentAlcohol, beer$Calories, main = 'Calories per ABV', 
+     type = 'p',
+     xlab = 'Alcohol by Volume (%)',
+     ylab = 'Calories')
+```
+
+```{r make_boxabv}
+boxplot(beer$PercentAlcohol, horizontal = TRUE, main = ' Percent Alcohol  in 153 beers', xlab = 'Alcohol by Volume (%)')
+```
+
+```{r make_boxcarbs}
+boxplot(beer$Carbohydrates, horizontal = TRUE, main = 'Carbohydrates in  153 beers', xlab = 'Carbohydrates')
+```
+
+
+```{r make_boxcals}
+boxplot(beer$Calories, horizontal = TRUE, main = 'Calories in 153 Different Beers', xlab = 'Calories')
+```
+
+The mean of the percent alcohol variable is `r mean(beer$PercentAlcohol)`%ABV, and the median is `r median(beer$PercentAlcohol)`%ABV. 
+
+Similarly, mean of the carbohydrate variable is `r mean(beer$Carbohydrates)` carbs, and the median is `r median(beer$Carbohydrates)` carbs. 
+
+The mean of the calorie variable is `r mean(beer$Calories)` cals, and the median is `r median(beer$Calories)`cals. 
+The standard deviation of the data set with respect to calories is `r sd(beer$Calories)` calories. 
+
+The standard deviation with respect to ABV is `r sd(beer$PercentAlcohol)`%ABV, and the standard deviation with respect to Carbohydrates is `r sd(beer$Carbohydrates)` carbs.
+
+
+I chose to plot Calories against Percent Alcohol to illustrate the number of calories pure alcohol contains (roughly 7calories per gram). The scatter plot clearly shows the points relative to each other. I also chose to make histograms to accentuate outliers and show where the majority of the data is concentrated. I also chose to plot each quantitative variable's data in a box plot.
+
+<font size="4">1.68b) </font> **Find outliers and their ABV**
+
+The code below finds outliers and displays their information. 
+``` {r 68}
+x = read.delim("ex01-68beer.txt", header = TRUE, sep = "\t")
+lowerq = quantile(x$PercentAlcohol)[2]
+upperq = quantile(x$PercentAlcohol)[4]
+iqr = upperq - lowerq
+mild.threshold.upper = (iqr * 1.5) + upperq
+mild.threshold.lower = lowerq - (iqr * 1.5)
+extreme.threshold.upper = (iqr * 3) + upperq
+extreme.threshold.lower = lowerq - (iqr * 3)
+outlier_set = subset(x, PercentAlcohol < mild.threshold.lower | PercentAlcohol > mild.threshold.upper)
+outlier_set[, c("Brand", "PercentAlcohol")]
+```
+
+Pictured above is the set of outliers, and their alcohol content is listed inside the table.
+
+
+<font size="4">1.71a) </font> **Graphically and numerically summarize the data, with reasons for choices**
+
+```{r make_table}
+potato = read.table("ex01-71potato.txt", header = TRUE, sep = "\t")
+hist(potato$weight, main = "Weight of Potatoes in ounces", xlab = "ounces", prob=TRUE)
+lines(density(potato$weight),
+  lwd = 2,
+  col = 'red')
+```
+```{r make_stem}
+potato = read.table("ex01-71potato.txt", header = TRUE, sep = "\t")
+x = potato$weight
+stem(x)
+```
+
+The mean of the data set is `r mean(potato$weight)` ounces, and the median is `r median(potato$weight)` oz. The standard deviation is `r sd(potato$weight)` oz. I chose to make a histogram because there was a single quantitative variable. I also chose to make a stem and leaf plot because I thought it would show the distributions well.
+
+
+<font size="4">1.71b) </font> **Determine if numerical summarization of is effective in describing the data **
+
+The numerical descriptions are imperfect- the median is greater than the mean, so it is skewed to the left. This is because there are two distinct clusters of points which cause numerical analysis to be more opaque. Therefore, graphing and visually presenting the data is the better choice.
+
+<font size="4">1.71c) </font> **Split data into two clusters and analyze them independently**
+
+We'll choose the median (6.7) the point of separation between the two sets of points. We then have two subsets of the original set which form two distinct clusters of points as picturted by the code below:
+
+```{r analyze_split_data}
+potato = read.table("ex01-71potato.txt", header = TRUE, sep = "\t")
+x = subset(potato, weight < 6.7)
+y = subset(potato, weight >= 6.7)
+```
+
+For the smaller cluster centered around the first quartile point of 5.3, we see the mean is `r mean(x$weight)` ounces and the standard deviation is `r sd(x$weight)` ounces.
+
+The larger cluster centered around the third quartile point of 7.8 has a mean of `r mean(y$weight)` ounces and a standard deviation of `r sd(y$weight)` ounces.
+
+<font size="4">1.79) </font> **Analyze workplace data**
+
+``` {r analyze179}
+vector = c(45000, 45000, 45000, 45000, 45000, 45000, 70000, 70000, 420000)
+```
+
+The mean salary at the firm is `r format(round(mean(vector), 2), scientific = FALSE)` dollars and the median salary is `r format(median(vector), scientific = FALSE)` dollars. `r sum(vector < mean(vector)) ` workers earn below the mean salary at the firm.
+
+
